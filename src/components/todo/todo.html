@@ -1,0 +1,5 @@
+<span ng-class="{ done: $ctrl.item.done }">
+    {{$ctrl.item.title}}
+    <button ng-click="$ctrl.onDoneClick()">done</button>
+    <button ng-click="$ctrl.onDeleteClick()">delete</button>
+</span>

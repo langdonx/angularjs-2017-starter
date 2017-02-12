@@ -1,0 +1,19 @@
+@import '../../styleConfig';
+
+app {
+    display: block;
+    max-width: $xl-width - 60px;
+    margin: auto;
+
+    @media screen and (max-width: $xl-width) {
+        max-width: $lg-width - 60px;
+    }
+
+    @media screen and (max-width: $lg-width) {
+        max-width: $md-width - 60px;
+    }
+
+    @media screen and (max-width: $md-width) {
+        max-width: $sm-width - 60px;
+    }
+}

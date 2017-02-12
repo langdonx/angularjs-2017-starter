@@ -1,0 +1,72 @@
+{
+  "preset": "default",
+  "plugins": [
+    "esformatter-quotes"
+  ],
+  "indent": {
+    "value": " ",
+    "ArrayExpression": 4,
+    "ArrayPattern": 4,
+    "ArrowFunctionExpression": 4,
+    "AssignmentExpression": 4,
+    "AssignmentExpression.BinaryExpression": 4,
+    "AssignmentExpression.LogicalExpression": 4,
+    "AssignmentExpression.UnaryExpression": 4,
+    "BlockStatement": 4,
+    "CallExpression": 4,
+    "CallExpression.BinaryExpression": 4,
+    "CallExpression.LogicalExpression": 4,
+    "CallExpression.UnaryExpression": 4,
+    "CatchClause": 4,
+    "ClassDeclaration": 4,
+    "ClassExpression": 4,
+    "CommentInsideEmptyBlock": 4,
+    "ConditionalExpression": 4,
+    "DoWhileStatement": 4,
+    "ExportNamedDeclaration": 4,
+    "ForInStatement": 4,
+    "ForOfStatement": 4,
+    "ForStatement": 4,
+    "FunctionDeclaration": 4,
+    "FunctionExpression": 4,
+    "IfStatement": 4,
+    "ImportDeclaration": 4,
+    "MemberExpression": 4,
+    "MultipleVariableDeclaration": 4,
+    "NewExpression": 4,
+    "ObjectExpression": 4,
+    "ObjectExpression.BinaryExpression": 4,
+    "ObjectExpression.LogicalExpression": 4,
+    "ObjectExpression.UnaryExpression": 4,
+    "ObjectPattern": 4,
+    "ParameterList": 4,
+    "ReturnStatement": 4,
+    "SingleVariableDeclaration": 0,
+    "SwitchCase": 4,
+    "SwitchStatement": 4,
+    "TopLevelFunctionBlock": 4,
+    "TryStatement": 4,
+    "VariableDeclaration.BinaryExpression": 4,
+    "VariableDeclaration.LogicalExpression": 4,
+    "VariableDeclaration.UnaryExpression": 4,
+    "WhileStatement": 4
+  },
+  "lineBreak": {
+    "before": {
+      "ElseIfStatement": 1,
+      "ElseStatement": 1,
+      "EndOfFile": 1
+    },
+    "after": {
+      "TryClosingBrace": 1
+    }
+  },
+  "whiteSpace": {
+    "after": {
+      "FunctionReservedWord": 1
+    }
+  },
+  "quotes": {
+    "type": "single"
+  }
+}

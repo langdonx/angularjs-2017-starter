@@ -1,0 +1,12 @@
+<h4>To Do List</h4>
+
+<ul>
+    <li ng-repeat="item in $ctrl.items">
+        <todo item="item" on-delete="$ctrl.onItemDelete(item)"></todo>
+    </li>
+</ul>
+
+<input type="text" placeholder="New Item" ng-model="$ctrl.newItemTitle" ng-keydown="$ctrl.onNewItemKeyDown($event)">
+<button ng-click="$ctrl.onAddClick()">Add</button>
+
+<button ng-click="$ctrl.onClearClick()">Clear</button>
