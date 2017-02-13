@@ -9,9 +9,6 @@ Features
 - Logical component compilation
 
 TODO
-- how to uglify with webpack+babel and keep source maps??
-    - this is currently stopping me: https://github.com/RReverser/babel-plugin-uglify/issues/3
-    - this is in beta, not sure if it's suitable: https://github.com/babel/babili
 - watch gulpfile.js for changes, reload, rebuild: https://www.npmjs.com/package/gulper
 - generally improve src/* (code cleanliness, ui, ux)
 - generally improve README.md with notes about each feature, reasoning behind approaches
@@ -20,11 +17,13 @@ TODO
 - images
 - fonts
 - tests
-- watcher on styleConfig.scss
 - versioned cache busting
 - figure out how to get the watcher not to just die when scss compilation fails
 - fork a bootstrap alternative (bootstrap, ui-bootstrap)
 - fork an angular material alternative
+- drop gulp-webpack and pipe/pump in favor of using webpack exclusively to get
+    - webpack/babel/uglify works fine, but the gulp-webpack workflow mangles it
+    - we also want to minimize the differences between dev/release code (we want to test uglified js in dev)
 
 CONSIDER
 - separating the controller class from the component (e.g. todo-list.controller.js)

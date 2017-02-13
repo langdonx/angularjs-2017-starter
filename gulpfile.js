@@ -4,8 +4,10 @@ const concat = require('gulp-concat');
 const esLint = require('gulp-eslint');
 const fs = require('fs');
 const gulp = require('gulp');
+const gulpWebpack = require('gulp-webpack');
 const historyApiFallback = require('connect-history-api-fallback');
 const merge = require('gulp-merge');
+const minifyCss = require('gulp-minify-css');
 const path = require('path');
 const pump = require('pump');
 const sass = require('gulp-sass');
@@ -13,7 +15,7 @@ const sourceMaps = require('gulp-sourcemaps');
 const styleLint = require('gulp-stylelint');
 const through2 = require('through2');
 const uglify = require('gulp-uglify');
-const webpack = require('gulp-webpack');
+const webpack = require('webpack');
 
 const webpackBaseConfig = {
     devtool: 'inline-source-map',
@@ -33,13 +35,15 @@ const webpackBaseConfig = {
             },
         }],
     },
+    // intentionally left empty
+    plugins: [],
 };
 
 gulp.task('build-development', ['clean'], () => {
     gulp.start(['components', 'html', 'js-app', 'js-vendor']);
 });
 
-gulp.task('build-release', ['clean', 'disable-source-maps'], () => {
+gulp.task('build-release', ['clean', 'configure-webpack-for-release'], () => {
     gulp.start(['components', 'html', 'js-app', 'js-vendor']);
 });
 
@@ -63,7 +67,7 @@ gulp.task('components', () => {
             merge(
                 // compile component/index.js with webpack + babel
                 gulp.src(path.join(baseComponentsPath, folder, '/index.js'))
-                    .pipe(webpack(Object.assign({
+                    .pipe(gulpWebpack(Object.assign({
                         output: {
                             filename: `${folder}.js`,
                         },
@@ -72,17 +76,17 @@ gulp.task('components', () => {
                 gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
                     .pipe(sass())
                     .pipe(concat('component.css'))
+                    .pipe(minifyCss())
                     .pipe(through2.obj((chunk, enc, cb) => {
-                        const cssJs = `(function() {
-  var s = document.createElement('style');
-  s.type = 'text/css';
-  s.innerHTML = '${chunk.contents.toString().replace(/\r/g, '').replace(/\n/g, '\\n')}';
-  document.getElementsByTagName('head')[0].appendChild(s);
-}());`;
+                        // avoid eslint complaining about max-len
+                        let cssJs = `!function(){var e=document.createElement("style");e.type="text/css",e.innerHTML="${chunk.contents.toString().replace(/\r/g, '').replace(/\n/g, '\\n')}"`;
+                        cssJs += ',document.getElementsByTagName("head")[0].appendChild(e)}();';
+
                         // avoid eslint complaining no-param-reassign (this can't be in the spirit of that)
                         Object.assign(chunk, {
                             contents: new Buffer(cssJs, 'binary'),
                         });
+
                         cb(null, chunk);
                     })))
                 .pipe(concat(`${folder}.js`))
@@ -90,12 +94,19 @@ gulp.task('components', () => {
         });
 });
 
-gulp.task('develop', ['build-development'], () => {
-    gulp.start(['watch', 'serve']);
+gulp.task('configure-webpack-for-release', () => {
+    // disable source maps
+    delete webpackBaseConfig.devtool;
+
+    // uglify output
+    webpackBaseConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
+        minimize: true,
+        sourceMap: true,
+    }));
 });
 
-gulp.task('disable-source-maps', () => {
-    delete webpackBaseConfig.devtool;
+gulp.task('develop', ['build-development'], () => {
+    gulp.start(['watch', 'serve']);
 });
 
 gulp.task('html', (cb) => {
@@ -108,7 +119,7 @@ gulp.task('html', (cb) => {
 gulp.task('js-app', (cb) => {
     pump([
         gulp.src('src/app.js'),
-        webpack(Object.assign({
+        gulpWebpack(Object.assign({
             output: {
                 filename: 'app.js',
             },
@@ -171,8 +182,7 @@ gulp.task('serve', () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch('src/app.js', ['js-app']);
-    gulp.watch('src/routeConfig.js', ['js-app']);
-    gulp.watch('src/components/**/*', ['components']);
+    gulp.watch(['src/app.js', 'src/routeConfig.js'], ['js-app']);
+    gulp.watch(['src/components/**/*', 'src/styleConfig.scss'], ['components']);
     gulp.watch('src/index.html', ['html']);
 });
