@@ -1,6 +1,4 @@
-import template from './todo-list.html';
-
-class controller {
+export default class controller {
     constructor() {
         this.idSeed = 7;
 
@@ -56,9 +54,3 @@ class controller {
         }
     }
 }
-
-export default {
-    name: 'todoList',
-    controller,
-    template,
-};

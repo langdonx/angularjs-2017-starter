@@ -31,6 +31,7 @@ const webpackBaseConfig = {
                         explicitOnly: true,
                     }],
                     'transform-html-import-to-string',
+                    'babel-plugin-ng-component-module',
                 ],
             },
         }],
