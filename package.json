@@ -42,8 +42,9 @@
   "scripts": {
     "start": "node node_modules/gulp/bin/gulp.js develop"
   },
-  "author": {
-    "name": "Langdon Oliver",
-    "email": "langdon@gmail.com"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langdonx/angularjs-2017-starter.git"
+  },
+  "author": "Langdon Oliver <langdon@gmail.com>"
 }
