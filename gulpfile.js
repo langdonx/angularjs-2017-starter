@@ -66,16 +66,20 @@ gulp.task('components', () => {
         .forEach((folder) => {
             // merge the result of webpack and our own sass compilation
             merge(
-                // compile component/index.js with webpack + babel
-                gulp.src(path.join(baseComponentsPath, folder, '/index.js'))
+                    // compile component/index.js with webpack + babel
+                    gulp.src(path.join(baseComponentsPath, folder, '/index.js'))
                     .pipe(gulpWebpack(Object.assign({
                         output: {
                             filename: `${folder}.js`,
                         },
                     }, webpackBaseConfig))),
-                // compile all component scss files into javascript
-                gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
+                    // compile all component scss files into javascript
+                    gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
                     .pipe(sass())
+                    .on('error', (...args) => {
+                        // this prevents gulp from crashing during sass errors
+                        console.error('swallowed sass Error', args);
+                    })
                     .pipe(concat('component.css'))
                     .pipe(minifyCss())
                     .pipe(through2.obj((chunk, enc, cb) => {
@@ -83,10 +87,7 @@ gulp.task('components', () => {
                         let cssJs = `!function(){var e=document.createElement("style");e.type="text/css",e.innerHTML="${chunk.contents.toString().replace(/\r/g, '').replace(/\n/g, '\\n')}"`;
                         cssJs += ',document.getElementsByTagName("head")[0].appendChild(e)}();';
 
-                        // avoid eslint complaining no-param-reassign (this can't be in the spirit of that)
-                        Object.assign(chunk, {
-                            contents: new Buffer(cssJs, 'binary'),
-                        });
+                        chunk.contents = new Buffer(cssJs, 'binary');
 
                         cb(null, chunk);
                     })))
@@ -173,17 +174,18 @@ gulp.task('lint-scss', (cb) => {
 
 gulp.task('serve', () => {
     browserSync.init({
+        files: ['./dist/**/*.*'],
+        ghostMode: false,
+        notify: false,
         server: {
             baseDir: './dist',
             middleware: [historyApiFallback()],
         },
-        files: ['./dist/**/*.*'],
-        notify: false,
     });
 });
 
 gulp.task('watch', () => {
-    gulp.watch(['src/app.js', 'src/routeConfig.js'], ['js-app']);
+    gulp.watch(['src/app.js', 'src/routeConfig.js', 'src/services/**/*.js'], ['js-app']);
     gulp.watch(['src/components/**/*', 'src/styleConfig.scss'], ['components']);
     gulp.watch('src/index.html', ['html']);
 });
