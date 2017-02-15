@@ -8,6 +8,16 @@
                 "allowSingleLine": true
             }
         ],
+        "comma-dangle": [
+            "error",
+            {
+                "arrays": "always-multiline",
+                "objects": "always-multiline",
+                "imports": "always-multiline",
+                "exports": "always-multiline",
+                "functions": "ignore"
+            }
+        ],
         "indent": [
             "error",
             4
@@ -16,7 +26,19 @@
         "max-len": [
             "error",
             200
-        ]
+        ],
+        "no-console": [
+            "error",
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ],
+        "no-param-reassign": [2, {
+            "props": false
+        }]
     },
     "globals": {
         "angular": true,
