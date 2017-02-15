@@ -5,6 +5,7 @@ export default {
     bindings: {
         item: '<',
         onDelete: '&',
+        onDone: '&',
     },
     controller,
     name: 'todo',
