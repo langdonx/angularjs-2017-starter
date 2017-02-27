@@ -41,11 +41,11 @@ const webpackBaseConfig = {
 };
 
 gulp.task('build-development', ['clean'], () => {
-    gulp.start(['components', 'html', 'js-app', 'js-vendor']);
+    gulp.start(['components', 'copy-assets', 'html', 'js-app', 'js-vendor']);
 });
 
 gulp.task('build-release', ['clean', 'configure-webpack-for-release'], () => {
-    gulp.start(['components', 'html', 'js-app', 'js-vendor']);
+    gulp.start(['components', 'copy-assets', 'html', 'js-app', 'js-vendor']);
 });
 
 gulp.task('clean', (cb) => {
@@ -84,7 +84,8 @@ gulp.task('components', () => {
                     .pipe(minifyCss())
                     .pipe(through2.obj((chunk, enc, cb) => {
                         // avoid eslint complaining about max-len
-                        let cssJs = `!function(){var e=document.createElement("style");e.type="text/css",e.innerHTML="${chunk.contents.toString().replace(/\r/g, '').replace(/\n/g, '\\n')}"`;
+                        let cssJs = '!function(){var e=document.createElement("style");e.type="text/css"';
+                        cssJs += `,e.innerHTML="${chunk.contents.toString().replace(/"/g, '\\"').replace(/\r/g, '').replace(/\n/g, '\\n')}"`;
                         cssJs += ',document.getElementsByTagName("head")[0].appendChild(e)}();';
 
                         chunk.contents = new Buffer(cssJs, 'binary');
@@ -105,6 +106,13 @@ gulp.task('configure-webpack-for-release', () => {
         minimize: true,
         sourceMap: true,
     }));
+});
+
+gulp.task('copy-assets', (cb) => {
+    pump([
+        gulp.src('src/assets/**/*'),
+        gulp.dest('dist/assets'),
+    ], cb);
 });
 
 gulp.task('develop', ['build-development'], () => {
@@ -187,5 +195,6 @@ gulp.task('serve', () => {
 gulp.task('watch', () => {
     gulp.watch(['src/app.js', 'src/routeConfig.js', 'src/services/**/*.js'], ['js-app']);
     gulp.watch(['src/components/**/*', 'src/styleConfig.scss'], ['components']);
+    gulp.watch('src/assets/**/*', ['copy-assets']);
     gulp.watch('src/index.html', ['html']);
 });

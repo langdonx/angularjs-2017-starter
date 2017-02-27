@@ -9,17 +9,17 @@ Features
 - Logical component compilation
 
 TODO
-- watch gulpfile.js for changes, reload, rebuild: https://www.npmjs.com/package/gulper
-- look into html formatting/linting whether it produces something commitable or not (like .esformatter, .stylelintrc)
 - drop gulp-webpack and pipe/pump in favor of using webpack exclusively to get
     - webpack/babel/uglify works fine, but the gulp-webpack workflow mangles it
     - we also want to minimize the differences between dev/release code (we want to test uglified js in dev)
-- images
-- fonts
+- versioned cache busting
+- watch gulpfile.js for changes, reload, rebuild
+    - https://www.npmjs.com/package/gulper
+    - tried, not great: https://github.com/ihoneycomb/gulp-auto-restart
+- look into html formatting/linting whether it produces something commitable or not (like .esformatter, .stylelintrc)
 - tests
     - testing controllers, services is easy
     - how do you unit test a component without the import statements firing?
-- versioned cache busting
 - generally improve src/* (code cleanliness, ui, ux)
 - generally improve README.md with notes about each feature, reasoning behind approaches
 - fork a bootstrap alternative (bootstrap, ui-bootstrap)
