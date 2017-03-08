@@ -1,10 +1,10 @@
 export default ($locationProvider, $stateProvider) => {
     'ngInject';
 
-    const loadDependencies = (...components) => ($q, $ocLazyLoad) => {
+    const loadDependencies = (...components) => ($q, $ocLazyLoad, AppVersion) => {
         'ngInject';
 
-        return $q.all(components.map(component => $ocLazyLoad.load(`components/${component}.js`)));
+        return $q.all(components.map(component => $ocLazyLoad.load(`${AppVersion}/components/${component}.js`)));
     };
 
     $locationProvider.html5Mode(true);

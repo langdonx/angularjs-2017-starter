@@ -55,15 +55,27 @@
     "before": {
       "ElseIfStatement": 1,
       "ElseStatement": 1,
-      "EndOfFile": 1
+      "EndOfFile": 1,
+      "ObjectExpressionOpeningBrace": -1,
+      "ObjectExpressionClosingBrace": -1,
+      "Property": -1
     },
     "after": {
-      "TryClosingBrace": 1
+      "TryClosingBrace": 1,
+      "ObjectExpressionOpeningBrace": -1,
+      "ObjectExpressionClosingBrace": -1,
+      "Property": -1
     }
   },
   "whiteSpace": {
+    "before": {
+      "ObjectExpressionClosingBrace": 1
+    },
     "after": {
-      "FunctionReservedWord": 1
+      "FunctionReservedWord": 1,
+      "MethodName": 1,
+      "ObjectExpressionOpeningBrace": 1,
+      "PropertyValue": -1
     }
   },
   "quotes": {

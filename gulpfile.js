@@ -10,12 +10,15 @@ const merge = require('gulp-merge');
 const minifyCss = require('gulp-minify-css');
 const path = require('path');
 const pump = require('pump');
+const replace = require('gulp-replace');
 const sass = require('gulp-sass');
 const sourceMaps = require('gulp-sourcemaps');
 const styleLint = require('gulp-stylelint');
 const through2 = require('through2');
 const uglify = require('gulp-uglify');
 const webpack = require('webpack');
+
+const appVersion = JSON.parse(fs.readFileSync('./package.json')).version;
 
 const webpackBaseConfig = {
     devtool: 'inline-source-map',
@@ -36,7 +39,7 @@ const webpackBaseConfig = {
             },
         }],
     },
-    // intentionally left empty
+    // intentionally left empty, for ease of use later
     plugins: [],
 };
 
@@ -66,21 +69,22 @@ gulp.task('components', () => {
         .forEach((folder) => {
             // merge the result of webpack and our own sass compilation
             merge(
-                    // compile component/index.js with webpack + babel
-                    gulp.src(path.join(baseComponentsPath, folder, '/index.js'))
+                // compile component/index.js with webpack + babel
+                gulp.src(path.join(baseComponentsPath, folder, '/index.js'))
                     .pipe(gulpWebpack(Object.assign({
                         output: {
                             filename: `${folder}.js`,
                         },
                     }, webpackBaseConfig))),
-                    // compile all component scss files into javascript
-                    gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
+                // compile all component scss files into javascript
+                gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
                     .pipe(sass())
                     .on('error', (...args) => {
                         // this prevents gulp from crashing during sass errors
                         console.error('swallowed sass Error', args);
                     })
                     .pipe(concat('component.css'))
+                    .pipe(replace('/assets/', `/${appVersion}/assets/`))
                     .pipe(minifyCss())
                     .pipe(through2.obj((chunk, enc, cb) => {
                         // avoid eslint complaining about max-len
@@ -93,7 +97,7 @@ gulp.task('components', () => {
                         cb(null, chunk);
                     })))
                 .pipe(concat(`${folder}.js`))
-                .pipe(gulp.dest('dist/components'));
+                .pipe(gulp.dest(`dist/${appVersion}/components`));
         });
 });
 
@@ -111,7 +115,7 @@ gulp.task('configure-webpack-for-release', () => {
 gulp.task('copy-assets', (cb) => {
     pump([
         gulp.src('src/assets/**/*'),
-        gulp.dest('dist/assets'),
+        gulp.dest(`dist/${appVersion}/assets`),
     ], cb);
 });
 
@@ -122,6 +126,7 @@ gulp.task('develop', ['build-development'], () => {
 gulp.task('html', (cb) => {
     pump([
         gulp.src(['src/index.html']),
+        replace(/\{version\}/g, appVersion),
         gulp.dest('dist/'),
     ], cb);
 });
@@ -134,7 +139,7 @@ gulp.task('js-app', (cb) => {
                 filename: 'app.js',
             },
         }, webpackBaseConfig)),
-        gulp.dest('dist'),
+        gulp.dest(`dist/${appVersion}`),
     ], cb);
 });
 
@@ -151,7 +156,7 @@ gulp.task('js-vendor', (cb) => {
             preserveComments: 'license',
         }),
         sourceMaps.write(),
-        gulp.dest('dist/'),
+        gulp.dest(`dist/${appVersion}`),
     ], cb);
 });
 
