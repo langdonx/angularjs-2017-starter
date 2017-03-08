@@ -19,15 +19,9 @@ app {
 }
 
 @font-face {
-  font-family: 'Kaushan Script';
-  font-weight: 400;
-  font-style: normal;
-  src: url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.eot');
-  src: url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.eot?#iefix') format('embedded-opentype'),
-       local('Kaushan Script'),
-       local('Kaushan-Script-regular'),
-       url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.woff2') format('woff2'),
-       url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.woff') format('woff'),
-       url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.ttf') format('truetype'),
-       url('/assets/fonts//Kaushan-Script-regular/Kaushan-Script-regular.svg#KaushanScript') format('svg');
+    font-family: 'Kaushan Script';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.eot');
+    src: url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.eot?#iefix') format('embedded-opentype'), local('Kaushan Script'), local('Kaushan-Script-regular'), url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.woff2') format('woff2'), url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.woff') format('woff'), url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.ttf') format('truetype'), url('/assets/fonts/Kaushan-Script-regular/Kaushan-Script-regular.svg#KaushanScript') format('svg');
 }
