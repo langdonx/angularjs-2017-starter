@@ -10,9 +10,6 @@ Features
 - File versioning as an easy cache busting technique
 
 TODO
-- drop gulp-webpack and pipe/pump in favor of using webpack exclusively to get
-    - webpack/babel/uglify works fine, but the gulp-webpack workflow mangles it
-    - we also want to minimize the differences between dev/release code (we want to test uglified js in dev)
 - watch gulpfile.js for changes, reload, rebuild
     - https://www.npmjs.com/package/gulper
     - tried, not great: https://github.com/ihoneycomb/gulp-auto-restart
