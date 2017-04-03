@@ -4,6 +4,7 @@ const concat = require('gulp-concat');
 const esLint = require('gulp-eslint');
 const fs = require('fs');
 const gulp = require('gulp');
+const watch = require('gulp-watch');
 const gulpWebpack = require('gulp-webpack');
 const historyApiFallback = require('connect-history-api-fallback');
 const merge = require('gulp-merge');
@@ -42,7 +43,7 @@ const webpackBaseConfig = {
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: true,
-        })
+        }),
     ],
 };
 
@@ -93,10 +94,7 @@ gulp.task('components', () => {
                         .pipe(replace('/assets/', `/${appVersion}/assets/`))
                         .pipe(minifyCss())
                         .pipe(through2.obj((chunk, enc, cb) => {
-                            // avoid eslint complaining about max-len
-                            let cssJs = '!function(){var e=document.createElement("style");e.type="text/css"';
-                            cssJs += `,e.innerHTML="${chunk.contents.toString().replace(/"/g, '\\"').replace(/\r/g, '').replace(/\n/g, '\\n')}"`;
-                            cssJs += ',document.getElementsByTagName("head")[0].appendChild(e)}();';
+                            const cssJs = `!function(){var e=document.createElement("style");e.type="text/css",e.innerHTML="${chunk.contents.toString().replace(/"/g, '\\"').replace(/\r/g, '').replace(/\n/g, '\\n')}",document.getElementsByTagName("head")[0].appendChild(e)}();`; // eslint-disable-line max-len
 
                             chunk.contents = new Buffer(cssJs, 'binary');
 
@@ -201,8 +199,15 @@ gulp.task('serve', () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch(['src/app.js', 'src/routeConfig.js', 'src/services/**/*.js'], ['js-app']);
-    gulp.watch(['src/components/**/*', 'src/styleConfig.scss'], ['components']);
-    gulp.watch('src/assets/**/*', ['copy-assets']);
-    gulp.watch('src/index.html', ['html']);
+    watch(['src/app.js', 'src/stateConfig.js', 'src/services/**/*.js'], () => gulp.start('js-app'))
+        .on('error', (...args) => console.log('WATCH ERROR js-app', args)); // eslint-disable-line no-console
+
+    watch(['src/components/**/*', 'src/styleConfig.scss'], () => gulp.start('components'))
+        .on('error', (...args) => console.log('WATCH ERROR components', args)); // eslint-disable-line no-console
+
+    watch('src/assets/**/*', () => gulp.start('copy-assets'))
+        .on('error', (...args) => console.log('WATCH ERROR copy-assets', args)); // eslint-disable-line no-console
+
+    watch('src/index.html', () => gulp.start('html'))
+        .on('error', (...args) => console.log('WATCH ERROR html', args)); // eslint-disable-line no-console
 });
