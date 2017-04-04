@@ -4,7 +4,6 @@ const concat = require('gulp-concat');
 const esLint = require('gulp-eslint');
 const fs = require('fs');
 const gulp = require('gulp');
-const watch = require('gulp-watch');
 const gulpWebpack = require('gulp-webpack');
 const historyApiFallback = require('connect-history-api-fallback');
 const merge = require('gulp-merge');
@@ -17,6 +16,7 @@ const sourceMaps = require('gulp-sourcemaps');
 const styleLint = require('gulp-stylelint');
 const through2 = require('through2');
 const uglify = require('gulp-uglify');
+const watch = require('gulp-watch');
 const webpack = require('webpack');
 
 const appVersion = JSON.parse(fs.readFileSync('./package.json')).version;
@@ -134,7 +134,7 @@ gulp.task('js-app', (cb) => {
     const config = Object.assign({
         entry: './src/app.js',
         output: {
-            filename: `./dist/${appVersion}/app.js`,
+            filename: `./dist/${appVersion}/app.min.js`,
         },
     }, webpackBaseConfig);
 
