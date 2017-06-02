@@ -1,9 +1,16 @@
 export default class {
-    constructor() {
-        // bindings
-        this.item = {};
-        this.onDelete = () => {};
-        this.onDone = () => {};
+    constructor($log) {
+        'ngInject';
+
+        Object.assign(this, { $log });
+
+        this.item = {}; // binding
+        this.onDelete = () => {}; // binding
+        this.onDone = () => {}; // binding
+    }
+
+    $onInit() {
+        this.$log.info('todo $onInit');
     }
 
     onDeleteClick() {

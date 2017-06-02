@@ -1,12 +1,8 @@
 export default class controller {
-    constructor($timeout, TodoDataService) {
+    constructor($log, $timeout, TodoDataService) {
         'ngInject';
 
-        // dependencies
-        Object.assign(this, {
-            $timeout,
-            TodoDataService,
-        });
+        Object.assign(this, { $log, $timeout, TodoDataService });
 
         this.items = [];
         this.newItemTitle = '';
@@ -19,6 +15,8 @@ export default class controller {
     }
 
     $onInit() {
+        this.$log.info('todoList $onInit');
+
         this.refreshItems();
     }
 
