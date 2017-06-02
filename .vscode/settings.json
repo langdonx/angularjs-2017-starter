@@ -1,4 +1,5 @@
 {
+    "blueprint.templatesPath": ".vscode/blueprint-templates",
     "eslint.enable": true,
     "files.exclude": {
         "dist/": true,
