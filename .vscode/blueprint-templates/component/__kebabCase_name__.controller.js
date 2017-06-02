@@ -6,6 +6,6 @@ export default class {
     }
 
     $onInit() {
-        this.$log.debug('{{kebabCase name}} $onInit');
+        this.$log.info('{{kebabCase name}} $onInit');
     }
 }
