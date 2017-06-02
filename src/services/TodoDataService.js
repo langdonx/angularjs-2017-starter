@@ -1,16 +1,13 @@
 export default class {
-    constructor(LocalStorageService) {
+    constructor(StorageService) {
         'ngInject';
 
-        // dependencies
-        Object.assign(this, {
-            LocalStorageService,
-        });
+        Object.assign(this, { StorageService });
 
         // initialize localStorage
-        if (angular.isUndefined(this.LocalStorageService.localStorage.todoItems) === true) {
-            this.LocalStorageService.localStorage.todoSeed = 6;
-            this.LocalStorageService.localStorage.todoItems = [{
+        if (angular.isUndefined(this.StorageService.localStorage.todoItems) === true) {
+            this.StorageService.localStorage.todoSeed = 6;
+            this.StorageService.localStorage.todoItems = [{
                 id: 1,
                 title: 'kick',
                 done: false,
@@ -39,29 +36,29 @@ export default class {
     }
 
     getAll() {
-        return this.LocalStorageService.localStorage.todoItems;
+        return this.StorageService.localStorage.todoItems;
     }
 
     add(title) {
         const newTodo = {
-            id: this.LocalStorageService.localStorage.todoSeed += 1,
+            id: this.StorageService.localStorage.todoSeed += 1,
             title,
             done: false,
         };
 
         // we can't push directly onto the the array since it's a localStorage facade
-        const todoItems = this.LocalStorageService.localStorage.todoItems;
-        this.LocalStorageService.localStorage.todoItems = todoItems.concat([newTodo]);
+        const todoItems = this.StorageService.localStorage.todoItems;
+        this.StorageService.localStorage.todoItems = todoItems.concat([newTodo]);
 
         return newTodo;
     }
 
     clear() {
-        this.LocalStorageService.localStorage.todoItems = [];
+        this.StorageService.localStorage.todoItems = [];
     }
 
     delete(todoToDelete) {
-        const todoItems = this.LocalStorageService.localStorage.todoItems;
+        const todoItems = this.StorageService.localStorage.todoItems;
 
         if (todoItems) {
             todoItems.some((todo, index) => {
@@ -73,12 +70,12 @@ export default class {
                 return false;
             });
 
-            this.LocalStorageService.localStorage.todoItems = todoItems;
+            this.StorageService.localStorage.todoItems = todoItems;
         }
     }
 
     update(updatedTodo) {
-        const todoItems = this.LocalStorageService.localStorage.todoItems;
+        const todoItems = this.StorageService.localStorage.todoItems;
 
         if (todoItems) {
             todoItems.some((todo) => {
@@ -90,7 +87,7 @@ export default class {
                 return false;
             });
 
-            this.LocalStorageService.localStorage.todoItems = todoItems;
+            this.StorageService.localStorage.todoItems = todoItems;
         }
     }
 }
