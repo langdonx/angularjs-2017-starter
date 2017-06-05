@@ -1,6 +1,6 @@
 {
   "name": "angularjs-2017-starter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "dependencies": {
     "angular": "1.6.4",
