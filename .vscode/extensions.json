@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"dbaeumer.vscode-eslint",
+		"formulahendry.auto-close-tag",
+		"formulahendry.auto-rename-tag",
+		"howardzuo.vscode-esformatter",
+		"mrmlnc.vscode-stylefmt",
+		"teamchilla.blueprint"
+	]
+}
