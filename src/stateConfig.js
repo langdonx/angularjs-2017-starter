@@ -10,25 +10,29 @@ export default ($locationProvider, $stateProvider) => {
     $locationProvider.html5Mode(true);
 
     $stateProvider
-        .state({
+        .state('app', {
             abstract: true,
             component: 'app',
-            name: 'app',
             resolve: {
                 dependencies: loadDependencies('core'),
             },
         })
-        .state({
+        .state('app.about', {
             component: 'about',
-            name: 'app.about',
             resolve: {
                 dependencies: loadDependencies('about'),
             },
             url: '/',
         })
-        .state({
+        .state('app.language-features', {
+            component: 'languageFeatures',
+            resolve: {
+                dependencies: loadDependencies('language-features'),
+            },
+            url: '/language-features',
+        })
+        .state('app.todo', {
             component: 'todoList',
-            name: 'app.todo',
             resolve: {
                 dependencies: loadDependencies('todo'),
             },

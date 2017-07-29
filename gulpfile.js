@@ -35,7 +35,10 @@ const webpackBaseConfig = {
                     ['angularjs-annotate', {
                         explicitOnly: true,
                     }],
+                    'transform-async-to-generator',
+                    'transform-exponentiation-operator',
                     'transform-html-import-to-string',
+                    'transform-runtime',
                     'babel-plugin-ng-component-module',
                 ],
             },
