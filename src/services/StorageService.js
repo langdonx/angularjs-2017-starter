@@ -8,7 +8,9 @@ export default class {
 
                 return (angular.isDefined(value) === true) ? JSON.parse(value) : value;
             },
-            set: (target, prop, value) => ($window.localStorage[prop] = JSON.stringify(value)),
+            set: (target, prop, value) => {
+                $window.localStorage[prop] = JSON.stringify(value);
+            },
             deleteProperty: (target, prop) => delete $window.localStorage[prop],
         });
 
@@ -18,7 +20,9 @@ export default class {
 
                 return (angular.isDefined(value) === true) ? JSON.parse(value) : value;
             },
-            set: (target, prop, value) => ($window.sessionStorage[prop] = JSON.stringify(value)),
+            set: (target, prop, value) => {
+                $window.sessionStorage[prop] = JSON.stringify(value);
+            },
             deleteProperty: (target, prop) => delete $window.sessionStorage[prop],
         });
     }
