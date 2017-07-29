@@ -1,23 +1,24 @@
 const browserSync = require('browser-sync').create();
-const clean = require('gulp-clean');
-const concat = require('gulp-concat');
-const esLint = require('gulp-eslint');
+const connecthistoryApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const gulp = require('gulp');
-const gulpWebpack = require('gulp-webpack');
-const historyApiFallback = require('connect-history-api-fallback');
-const merge = require('gulp-merge');
-const minifyCss = require('gulp-minify-css');
+const gulpClean = require('gulp-clean');
+const gulpCleanCss = require('gulp-clean-css');
+const gulpConcat = require('gulp-concat');
+const gulpEsLint = require('gulp-eslint');
+const gulpMerge = require('gulp-merge');
+const gulpReplace = require('gulp-replace');
+const gulpSass = require('gulp-sass');
+const gulpSassUnicode = require('gulp-sass-unicode');
+const gulpSourceMaps = require('gulp-sourcemaps');
+const gulpStyleLint = require('gulp-stylelint');
+const gulpUglify = require('gulp-uglify');
+const gulpWatch = require('gulp-watch');
 const path = require('path');
 const pump = require('pump');
-const replace = require('gulp-replace');
-const sass = require('gulp-sass');
-const sourceMaps = require('gulp-sourcemaps');
-const styleLint = require('gulp-stylelint');
 const through2 = require('through2');
-const uglify = require('gulp-uglify');
-const watch = require('gulp-watch');
 const webpack = require('webpack');
+const webpackStream = require('webpack-stream');
 
 const appVersion = JSON.parse(fs.readFileSync('./package.json')).version;
 
@@ -47,22 +48,19 @@ const webpackBaseConfig = {
     ],
 };
 
-gulp.task('build-development', ['clean'], () => {
+gulp.task('build', () => {
     gulp.start(['components', 'copy-assets', 'html', 'js-app', 'js-vendor']);
+});
+
+gulp.task('build-development', ['clean'], () => {
+    gulp.start('build');
 });
 
 gulp.task('build-release', ['clean', 'configure-webpack-for-release'], () => {
-    gulp.start(['components', 'copy-assets', 'html', 'js-app', 'js-vendor']);
+    gulp.start('build');
 });
 
-gulp.task('clean', (cb) => {
-    pump([
-        gulp.src('dist', {
-            read: false,
-        }),
-        clean(),
-    ], cb);
-});
+gulp.task('clean', () => gulp.src('dist', { read: false }).pipe(gulpClean()));
 
 gulp.task('components', () => {
     const baseComponentsPath = 'src/components';
@@ -75,24 +73,25 @@ gulp.task('components', () => {
 
             if (fs.existsSync(indexPath) === true) {
                 // merge the result of webpack and our own sass compilation
-                merge(
+                gulpMerge(
                     // compile component/index.js with webpack + babel
                     gulp.src(indexPath)
-                        .pipe(gulpWebpack(Object.assign({
+                        .pipe(webpackStream(Object.assign({
                             output: {
                                 filename: `${folder}.js`,
                             },
                         }, webpackBaseConfig))),
                     // compile all component scss files into javascript
                     gulp.src(path.join(baseComponentsPath, folder, '/**/*.scss'))
-                        .pipe(sass())
+                        .pipe(gulpSass())
+                        .pipe(gulpSassUnicode())
                         .on('error', (...args) => {
                             // this prevents gulp from crashing during sass errors
                             console.error('swallowed sass Error', args);
                         })
-                        .pipe(concat('component.css'))
-                        .pipe(replace('/assets/', `/${appVersion}/assets/`))
-                        .pipe(minifyCss())
+                        .pipe(gulpConcat('component.css'))
+                        .pipe(gulpReplace('/assets/', `/${appVersion}/assets/`))
+                        .pipe(gulpCleanCss())
                         .pipe(through2.obj((chunk, enc, cb) => {
                             const cssJs = `!function(){var e=document.createElement("style");e.type="text/css",e.innerHTML="${chunk.contents.toString().replace(/"/g, '\\"').replace(/\r/g, '').replace(/\n/g, '\\n')}",document.getElementsByTagName("head")[0].appendChild(e)}();`; // eslint-disable-line max-len
 
@@ -100,8 +99,8 @@ gulp.task('components', () => {
 
                             cb(null, chunk);
                         })))
-                    .pipe(concat(`${folder}.js`))
-                    .pipe(gulp.dest(`dist/${appVersion}/components`));
+                    .pipe(gulpConcat(`${folder}.js`))
+                    .pipe(gulp.dest(`./dist/${appVersion}/components`));
             }
         });
 });
@@ -125,7 +124,7 @@ gulp.task('develop', ['build-development'], () => {
 gulp.task('html', (cb) => {
     pump([
         gulp.src(['src/index.html']),
-        replace(/\{version\}/g, appVersion),
+        gulpReplace(/\{version\}/g, appVersion),
         gulp.dest('dist/'),
     ], cb);
 });
@@ -148,34 +147,29 @@ gulp.task('js-vendor', (cb) => {
     pump([
         gulp.src([
             'node_modules/angular/angular.js',
-            'node_modules/angular-ui-router/release/angular-ui-router.js',
             'node_modules/oclazyload/dist/ocLazyLoad.js',
+            'node_modules/@uirouter/angularjs/release/angular-ui-router.js',
         ]),
-        concat('vendor.min.js'),
-        sourceMaps.init(),
-        uglify({
-            preserveComments: 'license',
-        }),
-        sourceMaps.write(),
+        gulpConcat('vendor.min.js'),
+        gulpSourceMaps.init(),
+        gulpUglify(),
+        gulpSourceMaps.write(),
         gulp.dest(`dist/${appVersion}`),
     ], cb);
 });
 
 gulp.task('lint', ['lint-js', 'lint-scss']);
 
-gulp.task('lint-js', (cb) => {
-    pump([
-        gulp.src(['gulpfile.js', 'src/**/*.js']),
-        esLint(),
-        esLint.format(),
-        esLint.failAfterError(),
-    ], cb);
-});
+gulp.task('lint-js', () => gulp
+    .src(['gulpfile.js', './src/**/*.js'])
+    .pipe(gulpEsLint())
+    .pipe(gulpEsLint.format())
+    .pipe(gulpEsLint.failAfterError()));
 
 gulp.task('lint-scss', (cb) => {
     pump([
         gulp.src(['src/**/*.scss']),
-        styleLint({
+        gulpStyleLint({
             failAfterError: true,
             debug: true,
             reporters: [{
@@ -193,21 +187,24 @@ gulp.task('serve', () => {
         notify: false,
         server: {
             baseDir: './dist',
-            middleware: [historyApiFallback()],
+            middleware: [connecthistoryApiFallback()],
+        },
+        snippetOptions: {
+            blacklist: ['**/*?disable-browsersync'],
         },
     });
 });
 
 gulp.task('watch', () => {
-    watch(['src/app.js', 'src/stateConfig.js', 'src/services/**/*.js'], () => gulp.start('js-app'))
+    gulpWatch(['src/app.js', 'src/stateConfig.js', 'src/services/**/*.js'], () => gulp.start('js-app'))
         .on('error', (...args) => console.log('WATCH ERROR js-app', args)); // eslint-disable-line no-console
 
-    watch(['src/components/**/*', 'src/styleConfig.scss'], () => gulp.start('components'))
+    gulpWatch(['src/components/**/*', 'src/styleConfig.scss'], () => gulp.start('components'))
         .on('error', (...args) => console.log('WATCH ERROR components', args)); // eslint-disable-line no-console
 
-    watch('src/assets/**/*', () => gulp.start('copy-assets'))
+    gulpWatch('src/assets/**/*', () => gulp.start('copy-assets'))
         .on('error', (...args) => console.log('WATCH ERROR copy-assets', args)); // eslint-disable-line no-console
 
-    watch('src/index.html', () => gulp.start('html'))
+    gulpWatch('src/index.html', () => gulp.start('html'))
         .on('error', (...args) => console.log('WATCH ERROR html', args)); // eslint-disable-line no-console
 });

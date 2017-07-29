@@ -22,6 +22,15 @@
             "error",
             4
         ],
+        "jsx-a11y/href-no-hash": "off",
+        "jsx-a11y/anchor-is-valid": [
+            "warn",
+            {
+                "aspects": [
+                    "invalidHref"
+                ]
+            }
+        ],
         "linebreak-style": "off",
         "max-len": [
             "error",
@@ -36,9 +45,12 @@
                 ]
             }
         ],
-        "no-param-reassign": [2, {
-            "props": false
-        }]
+        "no-param-reassign": [
+            2,
+            {
+                "props": false
+            }
+        ]
     },
     "globals": {
         "angular": true,
