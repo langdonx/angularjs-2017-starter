@@ -10,7 +10,7 @@ export default class {
             },
             set: (target, prop, value) => {
                 $window.localStorage[prop] = JSON.stringify(value);
-                return !!prop && !!value;
+                return true;
             },
             deleteProperty: (target, prop) => delete $window.localStorage[prop],
         });
@@ -23,7 +23,7 @@ export default class {
             },
             set: (target, prop, value) => {
                 $window.sessionStorage[prop] = JSON.stringify(value);
-                return !!prop && !!value;
+                return true;
             },
             deleteProperty: (target, prop) => delete $window.sessionStorage[prop],
         });
